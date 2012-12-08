@@ -16,7 +16,7 @@ var heroSprites = [
 		"sprite5.png"
 	];
 var flowerSprites = [
-		"monsterflower.png"
+		"flowersprite.png"
 	];
 var img = new Image();
 var img2 = new Image();
@@ -125,14 +125,14 @@ function startGame () {
 
 	var flowerss = new createjs.SpriteSheet({
 		images: [img2],
-		frames: {width: 64, height: 64, regX: 32, regY: 32},
+		frames: {width: 439, height: 520, regX: 220.5, regY: 260},
 		animations: {
-			grow: [0, 10]
+			grow: [0, 3, false, 20]
 		}
 	});
 
 	flower = new createjs.BitmapAnimation(flowerss);
-	flower.name = "monsteridle1";
+	flower.name = "flower1";
 	flower.x = canvas.width/2;
 	flower.y = canvas.height/2;
 
@@ -142,6 +142,7 @@ function startGame () {
  //    hero.regY = hero.spriteSheet.frameHeight / 2 | 0;
 
 	hero.gotoAndPlay("fly");
+	flower.gotoAndPlay("grow");
 
 	hero.shadow = new createjs.Shadow("rgba(0, 0, 0, 0.3)", 0, 5, 5);
 
@@ -173,8 +174,8 @@ function startGame () {
 	circle.visible = false;
 	rested = false;
 
+	stage.addChild(flower);
 	stage.addChild(hero);
-	// stage.addChild(flower);
 
 	createjs.Ticker.useRAF = true;
 	createjs.Ticker.setFPS(60);
