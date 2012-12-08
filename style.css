@@ -54,6 +54,7 @@ canvas {
 .cover { cursor: auto; }
 
 .HP {
+	display: none;
 	position: absolute;
 	top: 0;
 	left: 20%;
