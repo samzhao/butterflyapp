@@ -5,7 +5,11 @@ var screen_height;
 var ss;
 var hero;
 var heroData;
+var flowerss;
 var flower;
+var frandomScales;
+var frandomScale;
+var randomScale;
 var touchX;
 var touched = false;
 var heroSprites = [
@@ -121,11 +125,21 @@ function startGame () {
 		}
 	};
 
+	frandomScales = [
+	1,
+	0.7,
+	0.6,
+	0.9,
+	0.8
+	];
+
+	frandomScale = frandomScales[Math.floor(Math.random()*5)];
+
 	ss = new createjs.SpriteSheet( heroData );
 
-	var flowerss = new createjs.SpriteSheet({
+	flowerss = new createjs.SpriteSheet({
 		images: [img2],
-		frames: {width: 439, height: 520, regX: 220.5, regY: 260},
+		frames: {width: 440, height: 520, regX: 80*frandomScale, regY: 0},
 		animations: {
 			grow: [0, 3, false, 20]
 		}
@@ -142,7 +156,7 @@ function startGame () {
  //    hero.regY = hero.spriteSheet.frameHeight / 2 | 0;
 
 	hero.gotoAndPlay("fly");
-	flower.gotoAndPlay("grow");
+	// flower.gotoAndPlay("grow");
 
 	hero.shadow = new createjs.Shadow("rgba(0, 0, 0, 0.3)", 0, 5, 5);
 
@@ -162,16 +176,18 @@ function startGame () {
 		1.4
 	];
 
-	var randomScale = randomScales[Math.floor(Math.random()*6)];
+	randomScale = randomScales[Math.floor(Math.random()*6)];
 
 	hero.scaleX = randomScale;
 	hero.scaleY = randomScale;
 
 	hero.currentFrame = 0;
 
-	circle = stage.addChild(new createjs.Shape());
-	circle.graphics.beginFill("lightblue").drawCircle(50,50,50);
-	circle.visible = false;
+	// circle = stage.addChild(new createjs.Shape());
+	// circle.graphics.beginFill("lightblue").drawCircle(50,50,50);
+	// circle.visible = false;
+
+	flower.visible = false;
 	rested = false;
 
 	stage.addChild(flower);
@@ -231,10 +247,10 @@ function tick () {
 		} else {
 			health -= 0.05;
 		}
-		if (circle) {
-			circle.alpha -= 0.001;
-			if (Math.floor(circle.alpha) < 0) {
-				circle.visible = false;
+		if (flower) {
+			flower.alpha -= 0.001;
+			if (Math.floor(flower.alpha) < 0) {
+				flower.visible = false;
 			}
 		}
 		createjs.Tween.get(hero).to({alpha: health/100}, 500);
@@ -268,9 +284,9 @@ function tick () {
 	}
 	rested = false;
 
-	if (circle) {
-		var pt = hero.localToLocal(0, 0, circle);
-		if (circle.visible && circle.hitTest(pt.x, pt.y)) {
+	if (flower) {
+		var pt = hero.localToLocal(0, 0, flower);
+		if (flower.visible && flower.hitTest(pt.x, pt.y)) {
 			// hero.gotoAndPlay("rest");
 			rested = true;
 		}
@@ -280,6 +296,13 @@ function tick () {
 		hero.y += Math.cos(createjs.Ticker.getTicks()/10)*10;
 	}
 
+	if (rested && flower.x < canvas.width/2) {
+		hero.scaleX = -randomScale;
+	} else {
+		hero.scaleX = randomScale;
+	}
+
+	console.log(hero.scaleX);
 	// MOUSE FOLLOW DIRECTION AND ROTATION
 	// var diffX = stage.mouseX - flower.x;
 	// var diffY = stage.mouseY - flower.y;
@@ -323,8 +346,8 @@ function fly() {
 	var randomposy = Math.floor(Math.random() * (canvas.height - 119)) + 20;
 	// var randomtime = Math.floor(Math.random() * (3500-1001)) + 1000;
 	if (!touched) {
-		if (circle && circle.visible) {
-			createjs.Tween.get(hero).to({y: circle.y, x: circle.x+50}, 2500);
+		if (flower && flower.visible) {
+			createjs.Tween.get(hero).to({y: flower.y, x: flower.x+50}, 2500);
 		} else {
 			createjs.Tween.get(hero).to({y: randomposy, x: randomposx}, 3000);
 		}
@@ -348,12 +371,25 @@ function rotate () {
 }
 
 function growTree () {
-	if(!circle.visible) {
-		// circle.x = canvas.width/2-50;
-		circle.x = touchX - 50;
-		circle.y = canvas.height-100;
-		circle.visible = true;
-		circle.alpha = 1;
+	if(!flower.visible) {
+		var fHeight = flowerss.getFrame(3).rect.height;
+		var fWidth = flowerss.getFrame(3).rect.width;
+		flower.scaleY = frandomScale;
+		flower.x = touchX;
+		if (flower.x < canvas.width/2) {
+			flower.scaleX = -frandomScale;
+			flower.regX = fWidth / 2.3;
+			flower.regY = fHeight / 8;
+		} else {
+			flower.scaleX = frandomScale;
+			flower.regX = fWidth / 8;
+			flower.regY = fHeight / 8;
+		}
+		console.log(flower.regX);
+		flower.y = canvas.height-fHeight*frandomScale/1.2;
+		flower.visible = true;
+		flower.alpha = 1;
+		flower.gotoAndPlay("grow");
 	}
 }
 
@@ -364,7 +400,6 @@ function flap () {
 		hero.gotoAndPlay('rest');
 	} else {
 		timeout = ss.getAnimation("fly").frequency * 2000;
-		console.log(timeout);
 		hero.gotoAndPlay('fly');
 	}
 	setTimeout(flap, timeout);
