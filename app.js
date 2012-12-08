@@ -2,16 +2,21 @@ var stage;
 var canvas;
 var screen_width;
 var screen_height;
+var ss;
 var hero;
+var heroData;
 var flower;
 var touchX;
 var touched = false;
-var sprites = [
+var heroSprites = [
 		"sprite.png",
 		"sprite2.png",
 		"sprite3.png",
 		"sprite4.png",
 		"sprite5.png"
+	];
+var flowerSprites = [
+		"monsterflower.png"
 	];
 var img = new Image();
 var img2 = new Image();
@@ -27,17 +32,34 @@ var touchSupport = 'ontouchstart' in window || 'onmsgesturechange' in window;
 
 window.addEventListener('resize', resize, false);
 
+function preload (imgs, callback) {
+	var loaded = 0;
+	$(imgs).each(function (){
+		var image = new Image();
+		image.src = this;
+		image.onload = function() {
+			if (++loaded == imgs.length && callback) {
+				callback();
+			}
+		};
+		image.onerror = function(e){
+			alert("Error loading Image: " + e.target.src);
+		};
+	});
+}
+
 $(function(){
-	$('.start').on('click', function(){
-		$(this).fadeOut(500, function(){
-			$('.cover').fadeOut(1000);
-			init();
+	preload(heroSprites.concat(flowerSprites), function(){
+		$('.start').on('click', function(){
+			$(this).fadeOut(500, function(){
+				$('.cover').fadeOut(1000);
+				init();
+			});
 		});
 	});
-
 });
 
-document.addEventListener("touchstart", function(){}, true);
+// document.addEventListener("touchstart", function(){}, true);
 
 function init() {
 	canvas = document.getElementById("canvas");
@@ -47,12 +69,10 @@ function init() {
 	createjs.Touch.enabled = true;
 
 	img.onload = handleImageLoad;
-	img.onerror = handleImageError;
-	img.src = sprites[Math.floor(Math.random()*5)];
+	img.src = heroSprites[Math.floor(Math.random()*heroSprites.length)];
 
 	img2.onload = handleImageLoad;
-	img2.onerror = handleImageError;
-	img2.src = "monsterflower.png";
+	img2.src = flowerSprites[Math.floor(Math.random()*flowerSprites.length)];
 
 	createjs.Ticker.addListener(this);
 
@@ -88,14 +108,20 @@ function startGame () {
 	screen_width = canvas.width;
 	screen_height = canvas.height;
 
-	var ss = new createjs.SpriteSheet({
+	heroData = {
 		images: [img],
 		frames: {width: 142, height: 101, regX: 81, regY: 78},
 		animations: {
-			fly: [0, 16],
+			fly: {
+				frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+				next: "fly",
+				frequency: 1
+				},
 			rest: [17, 25, "rest", 4]
 		}
-	});
+	};
+
+	ss = new createjs.SpriteSheet( heroData );
 
 	var flowerss = new createjs.SpriteSheet({
 		images: [img2],
@@ -155,6 +181,7 @@ function startGame () {
 
 	hero.onPress = function(evt) {
 		reduceHealth();
+		flySpeed();
 		touched = true;
 	};
 
@@ -190,10 +217,6 @@ function startGame () {
 	rotate();
 
 	// hero.y = fly.random;
-}
-
-function handleImageError (e) {
-	alert("Error loading Image: " + e.target.src);
 }
 
 function tick () {
@@ -253,7 +276,7 @@ function tick () {
 	}
 
 	if (touched && !rested) {
-		hero.y += Math.cos(createjs.Ticker.getTicks()/10)*25;
+		hero.y += Math.cos(createjs.Ticker.getTicks()/10)*10;
 	}
 
 	// MOUSE FOLLOW DIRECTION AND ROTATION
@@ -300,9 +323,9 @@ function fly() {
 	// var randomtime = Math.floor(Math.random() * (3500-1001)) + 1000;
 	if (!touched) {
 		if (circle && circle.visible) {
-			createjs.Tween.get(hero).to({y: circle.y, x: circle.x+50}, 2000);
+			createjs.Tween.get(hero).to({y: circle.y, x: circle.x+50}, 3000*100/health/2);
 		} else {
-			createjs.Tween.get(hero).to({y: randomposy, x: randomposx}, 3000);
+			createjs.Tween.get(hero).to({y: randomposy, x: randomposx}, 5000*100/health/3);
 		}
 	}
 	// createjs.Tween.get(hero).to({x: randomx}, 3000).wait(500);
@@ -339,8 +362,12 @@ function flap () {
 		timeout = 1200;
 		hero.gotoAndPlay('rest');
 	} else {
-		timeout = 2000;
+		timeout = ss.getAnimation("fly").frequency * 2000;
 		hero.gotoAndPlay('fly');
 	}
 	setTimeout(flap, timeout);
+}
+
+function flySpeed () {
+	ss.getAnimation("fly").frequency = Math.round(100/health);
 }
