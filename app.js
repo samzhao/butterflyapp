@@ -323,9 +323,9 @@ function fly() {
 	// var randomtime = Math.floor(Math.random() * (3500-1001)) + 1000;
 	if (!touched) {
 		if (circle && circle.visible) {
-			createjs.Tween.get(hero).to({y: circle.y, x: circle.x+50}, 3000*100/health/2);
+			createjs.Tween.get(hero).to({y: circle.y, x: circle.x+50}, 2500);
 		} else {
-			createjs.Tween.get(hero).to({y: randomposy, x: randomposx}, 5000*100/health/3);
+			createjs.Tween.get(hero).to({y: randomposy, x: randomposx}, 3000);
 		}
 	}
 	// createjs.Tween.get(hero).to({x: randomx}, 3000).wait(500);
@@ -363,6 +363,7 @@ function flap () {
 		hero.gotoAndPlay('rest');
 	} else {
 		timeout = ss.getAnimation("fly").frequency * 2000;
+		console.log(timeout);
 		hero.gotoAndPlay('fly');
 	}
 	setTimeout(flap, timeout);
