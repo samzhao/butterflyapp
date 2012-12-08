@@ -159,6 +159,7 @@ function startGame () {
 	// flower.gotoAndPlay("grow");
 
 	hero.shadow = new createjs.Shadow("rgba(0, 0, 0, 0.3)", 0, 5, 5);
+	flower.shadow = new createjs.Shadow("rgba(0, 0, 0, 0.3)", 1, 6, 5);
 
 	hero.name = "hero1";
 	hero.direction = 90;
