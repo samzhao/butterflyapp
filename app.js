@@ -20,7 +20,9 @@ var heroSprites = [
 		"sprite5.png"
 	];
 var flowerSprites = [
-		"flowersprite.png"
+		"flower-sprite.png",
+		"flower-sprite2.png",
+		"flower-sprite3.png"
 	];
 var img = new Image();
 var img2 = new Image();
@@ -29,8 +31,6 @@ var rested;
 var health = 100;
 
 var numberOfImagesLoaded = 0;
-
-var circle;
 
 var touchSupport = 'ontouchstart' in window || 'onmsgesturechange' in window;
 
@@ -70,7 +70,7 @@ function init() {
 	stage = new createjs.Stage(canvas);
 
 	stage.snapToPixelEnabled = true;
-	createjs.Touch.enabled = true;
+	createjs.Touch.enable(stage);
 
 	img.onload = handleImageLoad;
 	img.src = heroSprites[Math.floor(Math.random()*heroSprites.length)];
@@ -89,7 +89,8 @@ function init() {
 }
 
 function resize () {
-	stage.canvas.width = window.innerWidth - window.innerWidth/5;
+	// stage.canvas.width = window.innerWidth - window.innerWidth/5;
+	stage.canvas.width = window.innerWidth;
 	stage.canvas.height = window.innerHeight;
 }
 
@@ -126,10 +127,10 @@ function startGame () {
 	};
 
 	frandomScales = [
-	1,
+	0.6,
 	0.7,
 	0.6,
-	0.9,
+	0.5,
 	0.8
 	];
 
@@ -139,9 +140,9 @@ function startGame () {
 
 	flowerss = new createjs.SpriteSheet({
 		images: [img2],
-		frames: {width: 440, height: 520, regX: 80*frandomScale, regY: 0},
+		frames: {width: 354.5, height: 661, regX: 80*frandomScale, regY: 0},
 		animations: {
-			grow: [0, 3, false, 20]
+			grow: [0, 9, false, 2]
 		}
 	});
 
@@ -152,11 +153,7 @@ function startGame () {
 
 	hero = new createjs.BitmapAnimation(ss);
 
-	// hero.regX = hero.spriteSheet.frameWidth / 2 | 0;
- //    hero.regY = hero.spriteSheet.frameHeight / 2 | 0;
-
 	hero.gotoAndPlay("fly");
-	// flower.gotoAndPlay("grow");
 
 	hero.shadow = new createjs.Shadow("rgba(0, 0, 0, 0.3)", 0, 5, 5);
 	flower.shadow = new createjs.Shadow("rgba(0, 0, 0, 0.3)", 1, 6, 5);
@@ -184,10 +181,6 @@ function startGame () {
 
 	hero.currentFrame = 0;
 
-	// circle = stage.addChild(new createjs.Shape());
-	// circle.graphics.beginFill("lightblue").drawCircle(50,50,50);
-	// circle.visible = false;
-
 	flower.visible = false;
 	rested = false;
 
@@ -206,13 +199,6 @@ function startGame () {
 	stage.onMouseUp = function(evt) {
 		touched = false;
 	};
-
-	// circle.onPress = function(e) {
-	//	e.onMouseMove = function(evt){
-	//		e.target.x = evt.stageX;
-	//		e.target.y = evt.stageY;
-	//	};
-	// };
 	
 	if (touchSupport) {
 		canvas.ontouchstart = function(e){
@@ -225,9 +211,7 @@ function startGame () {
 	}
 
 	$("canvas").swipe({
-		swipeUp: function(){
-			growTree();
-		}
+		swipeUp: growTree
 	});
 
 	flap();
@@ -303,17 +287,6 @@ function tick () {
 		hero.scaleX = randomScale;
 	}
 
-	console.log(hero.scaleX);
-	// MOUSE FOLLOW DIRECTION AND ROTATION
-	// var diffX = stage.mouseX - flower.x;
-	// var diffY = stage.mouseY - flower.y;
-
-	// flower.x += diffX/20;
-	// flower.y += diffY/20;
-
-	// flower.rotation = Math.atan2(diffY, diffX) * 180 / Math.PI + 90;
-	// END OF MOUSE FOLLOW DIRECTION AND ROTATION
-
 	stage.update();
 }
 
@@ -333,19 +306,12 @@ function dead () {
 	$('.again').on('click', function(){
 		location.reload();
 	});
-	// $('.dead').fadeIn().on('click', function(){
-	//	$(this).fadeOut();
-	//	// health = 100;
-	//	// $('.life').html(health);
-	//	// startGame();
-	// });
 }
 
 function fly() {
-	// createjs.Tween.get(hero).to({y: (Math.floor(Math.random() * (300 - 20 + 1)) + 20)}, 300);
 	var randomposx = Math.floor(Math.random() * (canvas.width - 39)) + 20;
 	var randomposy = Math.floor(Math.random() * (canvas.height - 119)) + 20;
-	// var randomtime = Math.floor(Math.random() * (3500-1001)) + 1000;
+
 	if (!touched) {
 		if (flower && flower.visible) {
 			createjs.Tween.get(hero).to({y: flower.y, x: flower.x+50}, 2500);
@@ -353,9 +319,7 @@ function fly() {
 			createjs.Tween.get(hero).to({y: randomposy, x: randomposx}, 3000);
 		}
 	}
-	// createjs.Tween.get(hero).to({x: randomx}, 3000).wait(500);
-	// hero.y = randomy;
-	// hero.x = randomx;
+
 	setTimeout(fly, 3100);
 }
 
@@ -367,7 +331,7 @@ function rotate () {
 	} else {
 		createjs.Tween.get(hero).to({rotation: 0}, 1000);
 	}
-	// hero.rotation += ;
+
 	setTimeout(rotate, 2100);
 }
 
@@ -379,14 +343,14 @@ function growTree () {
 		flower.x = touchX;
 		if (flower.x < canvas.width/2) {
 			flower.scaleX = -frandomScale;
-			flower.regX = fWidth / 2.3;
-			flower.regY = fHeight / 8;
+			flower.regX = fWidth / (3*frandomScale);
+			flower.regY = fHeight / 9;
 		} else {
 			flower.scaleX = frandomScale;
 			flower.regX = fWidth / 8;
-			flower.regY = fHeight / 8;
+			flower.regY = fHeight / 9;
 		}
-		console.log(flower.regX);
+
 		flower.y = canvas.height-fHeight*frandomScale/1.2;
 		flower.visible = true;
 		flower.alpha = 1;

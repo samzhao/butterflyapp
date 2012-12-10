@@ -2,16 +2,15 @@
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Save That Butterfly!</title>
-    <script type="text/javascript" src="easeljs-0.5.0.min.js"></script>
-    <script src="ease.js"></script>
-    <script type="text/javascript" src="tweenjs-0.3.0.min.js"></script>
-    <script src="jquery.min.js"></script>
-    <script src="jquery.touchSwipe.min.js"></script>
-    <script src="app.js"></script>
 
     <link rel="stylesheet" href="style.css">
+    <script type="text/javascript">
+    document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+    </script>
 </head>
 <body>
 
@@ -20,7 +19,12 @@
 <div class="start">Tap to start</div>
 <div class="dead">The butterfly is dead x_x <br><small><a href="#" class="again">Try Again</a></small></div>
 <div class="HP">Life: <span class="life">--</span></div>
-<!-- <button id="Start" onclick="init();">Start</button> -->
-<!-- <button id="Fly" onclick="fly();">Fly!</button> -->
+
+<script type="text/javascript" src="easeljs-0.5.0.min.js"></script>
+<script src="ease.js"></script>
+<script type="text/javascript" src="tweenjs-0.3.0.min.js"></script>
+<script src="jquery.min.js"></script>
+<script src="jquery.touchSwipe.min.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

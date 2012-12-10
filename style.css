@@ -2,20 +2,23 @@ body {
 	padding: 0;
 	margin: 0;
 	font-family: Helvetica, Arial, sans-serif;
-	width: 100%;
-	height: 100%;
 	overflow: hidden;
+}
+
+html, body {
+	height: 100%;
+}
+
+a, div {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 canvas {
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	/* border: 1px inset red; */
-}
-
-canvas {
 	position: absolute;
 	top: 0;
-	left: 20%;
+	left: 0;
 	bottom: 0;
 	right: 0;
 }
@@ -42,13 +45,13 @@ canvas {
 	font-size: 3em;
 	position: absolute;
 	top: 0;
-	left: 20%;
 	bottom: 0;
+	left: 0;
 	right: 0;
+	padding-top: 30%;
 	text-align: center;
-	padding-top: 25%;
 	cursor: pointer;
-	white-space: nowrap;
+	/* white-space: nowrap; */
 }
 .dead { display: none; cursor: auto; }
 .cover { cursor: auto; }
